@@ -1,0 +1,27 @@
+
+
+services:
+  postgres_nba:
+    image: postgres:15
+    container_name: postgres_nba
+    restart: unless-stopped
+    ports:
+      - "5434:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: NBA
+    volumes:
+      - postgres_data:/var/lib/postgresql/data     # Volume Docker pour persister la base
+      - ./sql:/docker-entrypoint-initdb.d          # Init automatique avec scripts SQL
+      - ./scripts:/scripts                         # Scripts Python utiles
+      - ./data:/data                               # Tes fichiers CSV à intégrer
+    networks:
+      - nba_network
+
+networks:
+  nba_network:
+    driver: bridge
+
+volumes:
+  postgres_data:

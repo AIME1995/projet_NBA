@@ -1,0 +1,44 @@
+import psycopg2
+
+def drop_all_tables():
+    try:
+        print("🔁 Connexion à la base de données...")
+
+        conn = psycopg2.connect(
+            host="localhost",
+            port=5434,
+            dbname="NBA",
+            user="admin",
+            password="admin"
+        )
+        conn.autocommit = True
+        cur = conn.cursor()
+
+        print("🔎 Récupération des tables existantes...")
+        cur.execute("""
+            SELECT tablename
+            FROM pg_tables
+            WHERE schemaname = 'public';
+        """)
+        tables = cur.fetchall()
+
+        if not tables:
+            print("✅ Aucune table à supprimer.")
+        else:
+            for table in tables:
+                table_name = table[0]
+                print(f"🗑️ Suppression de la table : {table_name}")
+                cur.execute(f'DROP TABLE IF EXISTS "{table_name}" CASCADE;')
+
+            print("🎉 Toutes les tables ont été supprimées avec succès.")
+
+        cur.close()
+        conn.close()
+
+    except Exception as e:
+        print("❌ Une erreur est survenue :")
+        print(e)
+
+# ▶️ Exécution
+if __name__ == "__main__":
+    drop_all_tables()

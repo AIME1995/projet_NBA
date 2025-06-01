@@ -1,0 +1,72 @@
+import os
+import pandas as pd
+import psycopg2
+import psycopg2.extras
+from psycopg2 import sql
+
+# Dossier contenant les fichiers CSV
+csv_directory = os.path.join(os.path.dirname(__file__), '../data')
+
+# Détails de la connexion PostgreSQL
+db_params = {
+    'dbname': 'NBA',
+    'user': 'admin',
+    'password': 'admin',
+    'host': 'localhost',
+    'port': '5434'
+}
+
+# Connexion à PostgreSQL
+conn = psycopg2.connect(**db_params)
+cursor = conn.cursor()
+
+# Fonction pour supprimer la table si elle existe, puis la recréer avec des colonnes TEXT
+def recreate_table(df, table_name):
+    # Supprimer la table si elle existe
+    drop_query = sql.SQL("DROP TABLE IF EXISTS {table_name}").format(
+        table_name=sql.Identifier(table_name)
+    )
+    cursor.execute(drop_query)
+    print(f"Table {table_name} supprimée si elle existait.")
+
+    # Créer la table
+    create_query = sql.SQL("CREATE TABLE {table_name} (").format(
+        table_name=sql.Identifier(table_name)
+    )
+    columns = [sql.Identifier(col) for col in df.columns]
+    column_defs = [sql.SQL("{} TEXT").format(col) for col in columns]
+    create_query += sql.SQL(', ').join(column_defs) + sql.SQL(");")
+    cursor.execute(create_query)
+    print(f"Table {table_name} recréée avec colonnes en TEXT.")
+
+# Fonction pour insérer les données
+def insert_data(df, table_name):
+    insert_query = sql.SQL("INSERT INTO {table_name} ({fields}) VALUES ({placeholders})").format(
+        table_name=sql.Identifier(table_name),
+        fields=sql.SQL(', ').join(map(sql.Identifier, df.columns)),
+        placeholders=sql.SQL(', ').join([sql.Placeholder()] * len(df.columns))
+    )
+    data_tuples = [tuple(None if pd.isna(val) else str(val) for val in row) for row in df.to_numpy()]
+    psycopg2.extras.execute_batch(cursor, insert_query, data_tuples)
+    print(f"Données insérées dans {table_name}.")
+
+# Liste des fichiers CSV à traiter
+target_files = ['draft_combine_stats.csv', 'play_by_play.csv']
+
+# Traitement des fichiers
+for filename in target_files:
+    file_path = os.path.join(csv_directory, filename)
+    if os.path.exists(file_path):
+        df = pd.read_csv(file_path, dtype=str)  # Lecture forcée en texte
+        table_name = os.path.splitext(filename)[0]
+        recreate_table(df, table_name)
+        insert_data(df, table_name)
+        conn.commit()
+    else:
+        print(f"Fichier {filename} non trouvé dans le dossier 'data'.")
+
+# Fermeture de la connexion
+cursor.close()
+conn.close()
+
+print("Chargement terminé.")
