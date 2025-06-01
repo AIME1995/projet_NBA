@@ -10,55 +10,57 @@ Une fois les données intégrées et mises à jour dans la base, nous avons réa
 
 ## Structure du projet
 
+```plaintext
 C:.
-│ docker-compose.yml # Déploiement du conteneur PostgreSQL
-│ README.md # Documentation du projet
+│   docker-compose.yml       # Déploiement du conteneur PostgreSQL
+│   README.md                # Documentation du projet
 │
-├───analyse_data
-│ Analyse.ipynb # Notebook d’analyse des données intégrées
+├── analyse_data
+│   └── Analyse.ipynb        # Notebook d’analyse des données intégrées
 │
-├───data # Fichiers CSV sources
-│ common_player_info.csv
-│ draft_combine_stats.csv
-│ draft_history.csv
-│ game.csv
-│ game_info.csv
-│ game_summary.csv
-│ inactive_players.csv
-│ line_score.csv
-│ officials.csv
-│ other_stats.csv
-│ player.csv
-│ play_by_play.csv
-│ team.csv
-│ team_details.csv
-│ team_history.csv
-│ team_info_common.csv
+├── data                    # Fichiers CSV sources
+│   ├── common_player_info.csv
+│   ├── draft_combine_stats.csv
+│   ├── draft_history.csv
+│   ├── game.csv
+│   ├── game_info.csv
+│   ├── game_summary.csv
+│   ├── inactive_players.csv
+│   ├── line_score.csv
+│   ├── officials.csv
+│   ├── other_stats.csv
+│   ├── player.csv
+│   ├── play_by_play.csv
+│   ├── team.csv
+│   ├── team_details.csv
+│   ├── team_history.csv
+│   └── team_info_common.csv
 │
-├───scripts # Scripts Python d’intégration par table
-│ common-player_info.py
-│ draft_combine_stats.py
-│ draft_history.py
-│ drop_table.csv
-│ game.py
-│ game_info.py
-│ game_summary.py
-│ inactive_players.py
-│ line_score.py
-│ load_data.py
-│ load_draft_combine_play.csv
-│ officials.py
-│ other_stats.py
-│ player.py
-│ play_by_play.py
-│ team.py
-│ team_details.py
-│ team_history.py
-│ init.py
+├── scripts                 # Scripts Python d’intégration par table
+│   ├── common-player_info.py
+│   ├── draft_combine_stats.py
+│   ├── draft_history.py
+│   ├── drop_table.csv
+│   ├── game.py
+│   ├── game_info.py
+│   ├── game_summary.py
+│   ├── inactive_players.py
+│   ├── line_score.py
+│   ├── load_data.py
+│   ├── load_draft_combine_play.csv
+│   ├── officials.py
+│   ├── other_stats.py
+│   ├── player.py
+│   ├── play_by_play.py
+│   ├── team.py
+│   ├── team_details.py
+│   ├── team_history.py
+│   └── init.py
 │
-└───sql # Scripts SQL de création et insertion des tables
-create_tables.sql
-insert_data.sql
+└── sql                     # Scripts SQL de création et insertion des tables
+    ├── create_tables.sql
+    └── insert_data.sql
+
 
 
 
